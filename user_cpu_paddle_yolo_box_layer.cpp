@@ -77,7 +77,6 @@ int cpu_paddle_yolo_box_layer::process(void *param) {
   struct timeval start, stop;
   gettimeofday(&start, 0);
 #endif
-  printf("kkkkkkkkkkkkk");
   setParam(param);
   const int n = input_shapes_[0][0];
   const int h = input_shapes_[0][2];
@@ -99,7 +98,6 @@ int cpu_paddle_yolo_box_layer::process(void *param) {
     int img_height = static_cast<int>(ImgSize_data[2 * i]);
     int img_width = static_cast<int>(ImgSize_data[2 * i + 1]);
 
-    printf("aaaaaaa %d %d\n", img_height, img_width);
     for (int j = 0; j < an_num; j++) {
       for (int k = 0; k < h; k++) {
         for (int l = 0; l < w; l++) {
