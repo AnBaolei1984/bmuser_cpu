@@ -6,6 +6,7 @@ typedef enum {
     USER_PADDLE_BOX_CODER = 1,
     USER_PADDLE_MULTICLASS_NMS = 2,
     USER_PADDLE_YOLO_BOX = 3,
+    USER_PADDLE_ADAPTIVE_POOL = 4,
     USER_CPU_UNKNOW
 } USER_CPU_LAYER_TYPE_T;
 
@@ -39,11 +40,16 @@ typedef struct user_cpu_yolo_box_param {
     int anchors_size;
 } user_cpu_yolo_box_param_t;
 
+typedef struct user_cpu_adaptive_pool_param {
+    int is_avg;
+}user_cpu_adaptive_pool_param_t;
+
 union U {
   user_cpu_exp_param_t exp;
   user_cpu_box_coder_param_t box_coder_param;
   user_cpu_multiclass_nms_param_t multiclass_nms_param;
   user_cpu_yolo_box_param_t yolo_box_param;
+  user_cpu_adaptive_pool_param_t adaptive_pool_parm;
   U(){};
   ~U(){};
 };
