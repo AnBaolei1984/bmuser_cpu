@@ -88,7 +88,7 @@ int cpu_paddle_yolo_box_layer::process(void *param) {
   const int an_stride = (class_num_ + 5) * stride;
   auto anchors_data = anchors_;
   const float* X_data = input_tensors_[0];
-  float* ImgSize_data = input_tensors_[1];
+  int* ImgSize_data = (int*)input_tensors_[1];
   float* Boxes_data = output_tensors_[0];
   float* Scores_data = output_tensors_[1];
   float box[4];
