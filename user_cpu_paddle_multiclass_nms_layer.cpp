@@ -109,8 +109,10 @@ void cpu_paddle_multiclass_nms_layer::NMSFast(float* box,
 void cpu_paddle_multiclass_nms_layer::MultiClassOutput(float* box,
                       float* score,
                       float* output,
+                      float* output_index,
                       const std::map<int, std::vector<int>>& selected_indices,
-                      const int scores_size) {
+                      const int scores_size,
+                      const int offset) {
   int predict_dim = score_dims_[2];
   int box_size = boxes_dims_[2];
   int out_dim = box_size + 2;
@@ -128,6 +130,9 @@ void cpu_paddle_multiclass_nms_layer::MultiClassOutput(float* box,
       output[count * out_dim + 1] = sdata[idx];  // score
       // xmin, ymin, xmax, ymax or multi-points coordinates
       memcpy(output + count * out_dim + 2, bdata, box_size * sizeof(float));
+      if (return_index_) {
+        output_index[count] = offset + idx;
+      }
       count++;
     }
   }
@@ -210,21 +215,37 @@ int cpu_paddle_multiclass_nms_layer::process(void *param) {
     out_size *= output_shapes_[0][0][i];
   }
   memset(output, 0, sizeof(float) * out_size);
+  float* output_index = nullptr;
+  if (return_index_) {
+    output_index = output_tensors_[1];
+    out_size = 1;
+    for (int i = 0; i < 3; i++) {
+      out_size *= output_shapes_[1][0][i];
+    }
+    memset(output_index, 0, sizeof(float) * out_size);
+  }
+  memset(output, 0, sizeof(float) * out_size);
   int num_kept = batch_starts.back();
   if (num_kept == 0) {
     output[0] = -1;
     batch_starts = {0, 1};
   } else {
+    int offset = 0;
     for (int i = 0; i < n; ++i) {
       float* box = boxes + i * boxes_dims_[1] * boxes_dims_[2];
       float* score = scores + i * score_dims_[1] * score_dims_[2];
       int s = static_cast<int>(batch_starts[i]);
       int e = static_cast<int>(batch_starts[i + 1]);
+      if (return_index_) {
+        offset = i * score_dims_[2];
+      }
       if (e > s) {
         MultiClassOutput(
-            box, score, output, all_indices[i], score_dims_.size());
+            box, score, output, output_index,
+                all_indices[i], score_dims_.size(), offset);
       }
       output += output_shapes_[0][0][1] * output_shapes_[0][0][2];
+      output_index += output_shapes_[1][0][1] * output_shapes_[1][0][2];
     }
   }
 #ifdef CALC_TIME
@@ -246,6 +267,10 @@ void cpu_paddle_multiclass_nms_layer::setParam(void *param) {
   nms_top_k_ = multiclass_nms_param->nms_top_k;
   normalized_ = multiclass_nms_param->normalized;
   background_label_ = multiclass_nms_param->background_label;
+  return_index_ = false;
+  if (output_tensors_.size() > 1) {
+    return_index_ = true;
+  }
 }
 
 int cpu_paddle_multiclass_nms_layer::reshape(

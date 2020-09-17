@@ -34,6 +34,7 @@ protected:
     bool normalized_;
     std::vector<int> boxes_dims_;
     std::vector<int> score_dims_;
+    bool return_index_;
 
     void GetMaxScoreIndex(const float* scores,
                     std::vector<std::pair<float, int>>* sorted_indices);
@@ -44,8 +45,10 @@ protected:
     void MultiClassOutput(float* box,
                       float* score,
                       float* output,
+                      float* output_index,
                       const std::map<int, std::vector<int>>& selected_indices,
-                      const int scores_size);
+                      const int scores_size,
+                      const int offset);
     void MultiClassNMS(float* box, float* score,
                    std::map<int, std::vector<int>>* indices,
                    int* num_nmsed_out);
