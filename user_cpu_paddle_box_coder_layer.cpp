@@ -129,7 +129,10 @@ int cpu_paddle_box_coder_layer::process(void *param) {
 void cpu_paddle_box_coder_layer::setParam(void *param) {
   user_cpu_box_coder_param_t *box_coder_param =
                 static_cast<user_cpu_box_coder_param_t*>(param);
-  variance_ = box_coder_param->variance;
+  variance_len_ = box_coder_param->variance_len_;
+  USER_ASSERT(variance_len_ < 2000);
+  memset(variance_, 0, sizeof(float) * 2000);
+  memcpy(variance_, box_coder_param->variance, variance_len_ * sizeof(float));
   code_type_ = box_coder_param->code_type;
   axis_ = box_coder_param->axis;
   normalized_ = box_coder_param->normalized;

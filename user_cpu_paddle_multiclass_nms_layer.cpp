@@ -245,7 +245,9 @@ int cpu_paddle_multiclass_nms_layer::process(void *param) {
                 all_indices[i], score_dims_.size(), offset);
       }
       output += output_shapes_[0][0][1] * output_shapes_[0][0][2];
-      output_index += output_shapes_[1][0][1] * output_shapes_[1][0][2];
+      if (return_index_) {
+        output_index += output_shapes_[1][0][1] * output_shapes_[1][0][2];
+      }
     }
   }
 #ifdef CALC_TIME

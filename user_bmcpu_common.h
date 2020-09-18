@@ -16,7 +16,8 @@ typedef struct user_cpu_exp_param {
 } user_cpu_exp_param_t;
 
 typedef struct user_cpu_box_coder_param {
-    float* variance;
+    float variance[2000];
+    int variance_len_;
     int code_type;
     int axis;
     bool normalized;
@@ -33,7 +34,7 @@ typedef struct user_cpu_multiclass_nms_param {
 } user_cpu_multiclass_nms_param_t;
 
 typedef struct user_cpu_yolo_box_param {
-    int* anchors;
+    int anchors[2000];
     float conf_thresh;
     int class_num;
     int downsample_ratio;

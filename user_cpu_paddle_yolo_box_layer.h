@@ -25,7 +25,7 @@ public:
         return "USER_PADDLE_YOLO_BOX";
     }
 protected:
-    int* anchors_;
+    int anchors_[2000];
     int anchors_size_;
     float conf_thresh_;
     int class_num_;
