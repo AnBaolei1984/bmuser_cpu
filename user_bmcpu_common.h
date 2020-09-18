@@ -17,7 +17,7 @@ typedef struct user_cpu_exp_param {
 
 typedef struct user_cpu_box_coder_param {
     float variance[2000];
-    int variance_len_;
+    int variance_len;
     int code_type;
     int axis;
     bool normalized;
