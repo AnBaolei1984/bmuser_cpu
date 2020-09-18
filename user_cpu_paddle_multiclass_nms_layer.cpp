@@ -220,7 +220,7 @@ int cpu_paddle_multiclass_nms_layer::process(void *param) {
     output_index = output_tensors_[1];
     out_size = 1;
     for (int i = 0; i < 3; i++) {
-      out_size *= output_shapes_[1][0][i];
+      out_size *= output_shapes_[0][1][i];
     }
     memset(output_index, 0, sizeof(float) * out_size);
   }
@@ -246,7 +246,7 @@ int cpu_paddle_multiclass_nms_layer::process(void *param) {
       }
       output += output_shapes_[0][0][1] * output_shapes_[0][0][2];
       if (return_index_) {
-        output_index += output_shapes_[1][0][1] * output_shapes_[1][0][2];
+        output_index += output_shapes_[0][1][1] * output_shapes_[0][1][2];
       }
     }
   }
