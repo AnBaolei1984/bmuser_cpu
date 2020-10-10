@@ -67,6 +67,23 @@ int  user_cpu_reshape(void* bmcpu_handle, void *param,
                       vector<vector<int>>& output_shapes
                       );
 
+/**
+ * @name    user_cpu_dtype
+ * @brief   get output dtypes with given input dtypes
+ *
+ * The interface will call to get output dtypes with given input dtypes
+ *
+ * @param   [in]    bmcpu_handle   The pointer of cpu handler.
+ * @param   [in]    input_dtypes   The dtype of each input tensor.
+ * @param   [in]    output_dtypes  The dtype of each output tensor.
+ *
+ * @retval  0      success
+ * @retval  other  fail
+ */
+int  user_cpu_dtype(void* bmcpu_user_handle, void *param,
+                    const vector<int> &input_dtypes,
+                    vector<int> &output_dtypes);
+
 #if defined (__cplusplus)
 }
 #endif

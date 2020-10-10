@@ -39,6 +39,14 @@ public:
         return 0;
     }
 
+    virtual int dtype(void* param,
+          const vector<int> &input_dtypes,
+          vector<int> &output_dtypes)
+    {
+        cout << "default dtype: do nothing "<< endl;
+        return 0;
+    }
+
 protected:
 
     vector<float *> input_tensors_;

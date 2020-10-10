@@ -85,3 +85,24 @@ int user_cpu_reshape(void *bmcpu_user_handle, void *param,
 
     return -1;
 }
+
+/* call op_type user cpu layer's dtype handle.
+ * return 0 if sucesse, else return -1.
+ */
+int  user_cpu_dtype(void* bmcpu_user_handle, void *param,
+                    const vector<int> &input_dtypes,
+                    vector<int> &output_dtypes) {
+    if (NULL == param)
+        return -1;
+
+    auto& cpu_layers_ = ((bmcpu_user_handle_t *)bmcpu_user_handle)->cpu_layers_;
+    int op_type = ((user_cpu_param *)param)->op_type;
+    map<int, USER_STD::shared_ptr<user_cpu_layer> >::iterator iter = cpu_layers_.find(op_type);
+    if (iter != cpu_layers_.end()) {
+        return iter->second->dtype(param, input_dtypes, output_dtypes);
+    } else {
+        USER_ASSERT(0);
+    }
+
+    return -1;
+}
