@@ -48,7 +48,7 @@ int cpu_paddle_prior_box_layer::process(void *param) {
     step_width = prior_box_params_->step_w;
     step_height = prior_box_params_->step_h;
   }
-  int num_priors = prior_box_params_->aspect_ratios_len *
+  int num_priors = expand_aspect_ratios_.size() *
                                      prior_box_params_->min_sizes_len;
   if (prior_box_params_->max_sizes_len > 0) {
     num_priors += prior_box_params_->max_sizes_len;
