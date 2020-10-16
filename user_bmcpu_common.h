@@ -8,6 +8,7 @@ typedef enum {
     USER_PADDLE_YOLO_BOX = 3,
     USER_PADDLE_ADAPTIVE_POOL = 4,
     USER_PADDLE_PRIOR_BOX = 5,
+    USER_PADDLE_DENSITY_PRIOR_BOX = 6,
     USER_CPU_UNKNOW
 } USER_CPU_LAYER_TYPE_T;
 
@@ -65,6 +66,23 @@ typedef struct user_cpu_prior_box_param {
   bool clip;
   bool flip;
 }user_cpu_prior_box_param_t;
+
+typedef struct user_cpu_density_prior_box_param {
+  float densities[20];
+  float fixed_sizes[20];
+  float fixed_ratios[20];
+  float variances[20];
+  int densities_len;
+  int fixed_sizes_len;
+  int fixed_ratios_len;
+  int variances_len;
+  float step_w;
+  float step_h;
+  float offset;
+  int prior_num;
+  bool flatten_to_2d;
+  bool clip;
+}user_cpu_density_prior_box_param_t;
 
 
 union U {
