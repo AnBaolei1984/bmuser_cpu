@@ -68,7 +68,7 @@ typedef struct user_cpu_prior_box_param {
 }user_cpu_prior_box_param_t;
 
 typedef struct user_cpu_density_prior_box_param {
-  float densities[20];
+  int densities[20];
   float fixed_sizes[20];
   float fixed_ratios[20];
   float variances[20];
