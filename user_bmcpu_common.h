@@ -92,6 +92,7 @@ union U {
   user_cpu_yolo_box_param_t yolo_box_param;
   user_cpu_adaptive_pool_param_t adaptive_pool_parm;
   user_cpu_prior_box_param_t prior_box_param;
+  user_cpu_density_prior_box_param_t density_prior_box_param;
   U(){};
   ~U(){};
 };
