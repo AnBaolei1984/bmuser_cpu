@@ -17,37 +17,37 @@ int cpu_paddle_density_prior_box_layer::process(void *param) {
   int feature_width = input_shapes_[0][3];
   int feature_height = input_shapes_[0][2];
   float step_width, step_height;
-  if (density_prior_box_params_->step_w == 0.f || density_prior_box_params_->step_h == 0.f) {
+  if (density_prior_box_params_.step_w == 0.f || density_prior_box_params_.step_h == 0.f) {
     step_width = static_cast<float>(img_width) / feature_width;
     step_height = static_cast<float>(img_height) / feature_height;
   } else {
-    step_width = density_prior_box_params_->step_w;
-    step_height = density_prior_box_params_->step_h;
+    step_width = density_prior_box_params_.step_w;
+    step_height = density_prior_box_params_.step_h;
   }
 
   int num_priors = 0;
-  for (size_t i = 0; i < density_prior_box_params_->densities_len; ++i) {
-    num_priors += (density_prior_box_params_->fixed_ratios_len) *
-                      (pow(density_prior_box_params_->densities[i], 2));
+  for (size_t i = 0; i < density_prior_box_params_.densities_len; ++i) {
+    num_priors += (density_prior_box_params_.fixed_ratios_len) *
+                      (pow(density_prior_box_params_.densities[i], 2));
   }
-  density_prior_box_params_->prior_num = num_priors;
+  density_prior_box_params_.prior_num = num_priors;
   int step_average = static_cast<int>((step_width + step_height) * 0.5);
   std::vector<float> sqrt_fixed_ratios;
-  for (size_t i = 0; i < density_prior_box_params_->fixed_ratios_len; i++) {
-    sqrt_fixed_ratios.push_back(sqrt(density_prior_box_params_->fixed_ratios[i]));
+  for (size_t i = 0; i < density_prior_box_params_.fixed_ratios_len; i++) {
+    sqrt_fixed_ratios.push_back(sqrt(density_prior_box_params_.fixed_ratios[i]));
   }
   float* output = output_tensors_[0];
   float* b_t = output;
   for (int h = 0; h < feature_height; ++h) {
     for (int w = 0; w < feature_width; ++w) {
-      float center_x = (w + density_prior_box_params_->offset) * step_width;
-      float center_y = (h + density_prior_box_params_->offset) * step_height;
-      for (size_t s = 0; s < density_prior_box_params_->fixed_sizes_len; ++s) {
-        auto fixed_size = density_prior_box_params_->fixed_sizes[s];
-        int density = density_prior_box_params_->densities[s];
+      float center_x = (w + density_prior_box_params_.offset) * step_width;
+      float center_y = (h + density_prior_box_params_.offset) * step_height;
+      for (size_t s = 0; s < density_prior_box_params_.fixed_sizes_len; ++s) {
+        auto fixed_size = density_prior_box_params_.fixed_sizes[s];
+        int density = density_prior_box_params_.densities[s];
         int shift = step_average / density;
         // Generate density prior boxes with fixed ratios.
-        for (size_t r = 0; r < density_prior_box_params_->fixed_ratios_len; ++r) {
+        for (size_t r = 0; r < density_prior_box_params_.fixed_ratios_len; ++r) {
           float box_width_ratio = fixed_size * sqrt_fixed_ratios[r];
           float box_height_ratio = fixed_size / sqrt_fixed_ratios[r];
           float density_center_x = center_x - step_average / 2. + shift / 2.;
@@ -72,7 +72,7 @@ int cpu_paddle_density_prior_box_layer::process(void *param) {
     }
   }
   int32_t channel_size = feature_height * feature_width * num_priors * 4;
-  if (density_prior_box_params_->clip) {
+  if (density_prior_box_params_.clip) {
     for (int32_t d = 0; d < channel_size; ++d) {
       output[d] = std::min(std::max(output[d], 0.f), 1.f);
     }
@@ -83,7 +83,7 @@ int cpu_paddle_density_prior_box_layer::process(void *param) {
     for (int32_t w = 0; w < feature_width; ++w) {
       for (int32_t i = 0; i < num_priors; ++i) {
         for (int j = 0; j < 4; ++j) {
-          ptr[count] = density_prior_box_params_->variances[j];
+          ptr[count] = density_prior_box_params_.variances[j];
           ++count;
         }
       }
@@ -99,12 +99,34 @@ int cpu_paddle_density_prior_box_layer::process(void *param) {
 }
 
 void cpu_paddle_density_prior_box_layer::setParam(void *param) {
-  density_prior_box_params_ =
+  user_cpu_density_prior_box_param_t* p_density_prior_box_param =
        static_cast<user_cpu_density_prior_box_param_t*>(param);
-  USER_ASSERT(density_prior_box_params_->densities_len < 20);
-  USER_ASSERT(density_prior_box_params_->fixed_ratios_len < 20);
-  USER_ASSERT(density_prior_box_params_->fixed_sizes_len < 20);
-  USER_ASSERT(density_prior_box_params_->variances_len < 20);
+  USER_ASSERT(p_density_prior_box_param->densities_len < 20);
+  USER_ASSERT(p_density_prior_box_param->fixed_ratios_len < 20);
+  USER_ASSERT(p_density_prior_box_param->fixed_sizes_len < 20);
+  USER_ASSERT(p_density_prior_box_param->variances_len < 20);
+
+  density_prior_box_params_.densities_len = p_density_prior_box_param->densities_len;
+  density_prior_box_params_.fixed_ratios_len = p_density_prior_box_param->fixed_ratios_len;
+  density_prior_box_params_.fixed_sizes_len = p_density_prior_box_param->fixed_sizes_len;
+  density_prior_box_params_.variances_len = p_density_prior_box_param->variances_len;
+  memset(density_prior_box_params_.densities, 0, sizeof(int) * 20);
+  memcpy(density_prior_box_params_.densities, p_density_prior_box_param->densities, density_prior_box_params_.densities_len * sizeof(int));
+
+  memset(density_prior_box_params_.variances, 0, sizeof(float) * 20);
+  memcpy(density_prior_box_params_.variances, p_density_prior_box_param->variances, density_prior_box_params_.variances_len * sizeof(float));
+
+  memset(density_prior_box_params_.fixed_ratios, 0, sizeof(float) * 20);
+  memcpy(density_prior_box_params_.fixed_ratios, p_density_prior_box_param->fixed_ratios, density_prior_box_params_.fixed_ratios_len * sizeof(float));
+
+  memset(density_prior_box_params_.fixed_sizes, 0, sizeof(int) * 20);
+  memcpy(density_prior_box_params_.fixed_sizes, p_density_prior_box_param->fixed_sizes, density_prior_box_params_.fixed_sizes_len * sizeof(int));
+  density_prior_box_params_.clip = p_density_prior_box_param->clip;
+  density_prior_box_params_.offset = p_density_prior_box_param->offset;
+  density_prior_box_params_.prior_num = p_density_prior_box_param->prior_num;
+  density_prior_box_params_.step_h = p_density_prior_box_param->step_h;
+  density_prior_box_params_.step_w = p_density_prior_box_param->step_w;
+  density_prior_box_params_.flatten_to_2d = p_density_prior_box_param->flatten_to_2d;
 }
 
 int cpu_paddle_density_prior_box_layer::reshape(

@@ -103,6 +103,5 @@ int  user_cpu_dtype(void* bmcpu_user_handle, void *param,
     } else {
         USER_ASSERT(0);
     }
-
     return -1;
 }
