@@ -31,7 +31,7 @@ public:
 protected:
     void encodeCenterSize();
     void decodeCenterSize();
-    float variance_[2000];
+    float variance_[20];
     int variance_len_;
     int code_type_;
     int axis_;

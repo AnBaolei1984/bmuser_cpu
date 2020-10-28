@@ -28,7 +28,7 @@ public:
         return "USER_PADDLE_DENSITY_PRIOR_BOX";
     }
 protected:
-    user_cpu_density_prior_box_param_t density_prior_box_params_;
+    user_cpu_density_prior_box_param_t* density_prior_box_params_;
 };
 
 } /* namespace usercpu */

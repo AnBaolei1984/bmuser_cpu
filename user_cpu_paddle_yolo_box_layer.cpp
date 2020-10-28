@@ -152,8 +152,8 @@ void cpu_paddle_yolo_box_layer::setParam(void *param) {
   user_cpu_yolo_box_param_t * yolo_box_param =
                 static_cast<user_cpu_yolo_box_param_t*>(param);
   anchors_size_ = yolo_box_param->anchors_size;
-  USER_ASSERT(anchors_size_ < 2000);
-  memset(anchors_, 0, sizeof(int) * 2000);
+  USER_ASSERT(anchors_size_ < 100);
+  memset(anchors_, 0, sizeof(int) * 100);
   memcpy(anchors_, yolo_box_param->anchors, anchors_size_ * sizeof(int));
   conf_thresh_ = yolo_box_param->conf_thresh;
   class_num_ = yolo_box_param->class_num;
