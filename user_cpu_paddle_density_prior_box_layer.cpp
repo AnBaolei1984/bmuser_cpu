@@ -99,7 +99,7 @@ int cpu_paddle_density_prior_box_layer::process(void *param) {
 }
 
 void cpu_paddle_density_prior_box_layer::setParam(void *param) {
-  user_cpu_density_prior_box_param_t* p_density_prior_box_param =
+  density_prior_box_params_ =
        static_cast<user_cpu_density_prior_box_param_t*>(param);
   USER_ASSERT(density_prior_box_params_->densities_len < 20);
   USER_ASSERT(density_prior_box_params_->fixed_ratios_len < 20);
