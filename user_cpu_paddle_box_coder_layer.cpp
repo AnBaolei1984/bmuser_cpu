@@ -150,10 +150,13 @@ int cpu_paddle_box_coder_layer::dtype(
           void* param,
           const vector<int>& input_dtypes,
           vector<int>& output_dtypes) {
-    USER_ASSERT(input_dtypes.size() == 1);
-    output_dtypes = {input_dtypes[0]};
-    cout << " cpu exp dtype "<< endl;
-    return 0;
+  USER_ASSERT(input_dtypes.size() > 0);
+  if (input_dtypes.size() > 1) {
+    return 1;
+  }
+  output_dtypes = {input_dtypes[0]};
+  cout << " cpu exp dtype "<< endl;
+  return 0;
 }
 
 /* must register user layer
